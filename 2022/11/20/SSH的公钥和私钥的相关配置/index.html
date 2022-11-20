@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>SSH的公钥和私钥的相关配置 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="如何在一台电脑上同时使用多把SSH密钥">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH的公钥和私钥的相关配置">
+<meta property="og:url" content="http://example.com/2022/11/20/SSH%E7%9A%84%E5%85%AC%E9%92%A5%E5%92%8C%E7%A7%81%E9%92%A5%E7%9A%84%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="如何在一台电脑上同时使用多把SSH密钥">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-a434314dbe62d64fb1942493555fc2f7_720w.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-c97914c848e5485f2e79f6e7a68a29b8_720w.jpg">
+<meta property="og:image" content="https://img-blog.csdn.net/20180608110633762?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h1YW5odWFucTEyMDk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190305150104217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNTg2Mjgw,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey1.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey2.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey3.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey4.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey5.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey6.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey7.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey8.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey9.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey10.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey11.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey12.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey13.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey14.jpg">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey15.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey16.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey17.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey18.png">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey19.jpg">
+<meta property="og:image" content="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey20.png">
+<meta property="article:published_time" content="2022-11-20T05:14:30.489Z">
+<meta property="article:modified_time" content="2022-11-20T05:14:30.489Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="SSH">
+<meta property="article:tag" content="Hexo博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic4.zhimg.com/80/v2-a434314dbe62d64fb1942493555fc2f7_720w.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-SSH的公钥和私钥的相关配置" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/11/20/SSH%E7%9A%84%E5%85%AC%E9%92%A5%E5%92%8C%E7%A7%81%E9%92%A5%E7%9A%84%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/" class="article-date">
+  <time class="dt-published" datetime="2022-11-20T05:14:30.489Z" itemprop="datePublished">2022-11-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2/">Hexo博客</a>►<a class="article-category-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2/SSH%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">SSH免密登录</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      SSH的公钥和私钥的相关配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="如何在一台电脑上同时使用多把SSH密钥"><a href="#如何在一台电脑上同时使用多把SSH密钥" class="headerlink" title="如何在一台电脑上同时使用多把SSH密钥"></a>如何在一台电脑上同时使用多把SSH密钥</h1><span id="more"></span>
+<h2 id="1、前言"><a href="#1、前言" class="headerlink" title="1、前言"></a>1、前言</h2><p>最近重装了一下系统，用上了 win10，之前电脑上的开发环境和配置都被清除了，由于工作原因我需要经常使用 Gitee（码云）和 Github ，之前配置好了一个，但是不知道怎么同时配置两个，所以就有了这篇文章。</p>
+<p>既然要同时配置 Gitee 和 Github ，所以以下这些步骤自然是要执行两遍的。一般来说，在 Gitee 上和在 Github 上使用的账号邮箱应该是不一样的，所以配置的时候要特别注意一下。</p>
+<h2 id="2、清除-git-的全局设置"><a href="#2、清除-git-的全局设置" class="headerlink" title="2、清除 git 的全局设置"></a>2、清除 git 的全局设置</h2><p>如果已经配置Git，需要先清除git 的全局设置，如果没有就跳过这一步。<br><code>git config --global --list</code> 查看是否设置：</p>
+<p>删除设置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> user.name</span><br><span class="line">git config --global --<span class="built_in">unset</span> user.email</span><br></pre></td></tr></table></figure>
+
+<p><strong>邮箱不必与GitHub账号相同，个人邮箱即可。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;我的姓名&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;xxxx@qq.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>查看账户和邮箱</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name </span><br><span class="line">git config --global user.email</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3、创建-ssh-key"><a href="#3、创建-ssh-key" class="headerlink" title="3、创建 ssh key"></a>3、创建 ssh key</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入用户目录下的 .ssh 文件夹下，路径会因你使用的操作系统不同而略有差异</span></span><br><span class="line"><span class="comment"># 没有这个文件夹也无所谓，直接运行下一句命令也可以，再直接一点，直接创建个.ssh的文件夹</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成 key，将邮件地址替换为你 Gitee 或者 Github 使用的邮件地址</span></span><br><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;xxx@xxx.com&quot;</span> -f <span class="string">&quot;自定义密钥名称id_rsa&quot;</span></span><br><span class="line">-t  <span class="comment"># 密钥的类型</span></span><br><span class="line">-C  <span class="comment"># 用于识别这个密钥的注释，而且这个注释其实就在 ~\.ssh\id_rsa.pub 文本内容末尾。所以这个注释你可以输入任何内容，很多网站和软件用这个注释作为密钥的名字</span></span><br><span class="line">-f  <span class="comment"># 自定义密钥的名称</span></span><br></pre></td></tr></table></figure>
+
+<p>关于 ssh 参数更多参见：<a target="_blank" rel="noopener" href="https://www.iteye.com/blog/killer-jok-1853451">ssh-keygen参数说明</a>。。。。</p>
+<p>接下来应该会看到下面的提示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file in which to save the key (/c/Users/your_user_name/.ssh/id_rsa): id_rsa_gitee</span><br></pre></td></tr></table></figure>
+
+<p>这一步如果默认回车，会生成名为 <code>id_rsa</code> 的文件，你可以输入不同的名字来便于识别文件，比如生成 Gitee 的 ssh key 可以设置为 <code>id_rsa_gitee</code>，设置 Github 的 ssh key 可以设置为 <code>id_rsa_github</code> ，我这里设置为 <code>id_rsa_gitee</code>。</p>
+<p>接下来的会看到：（这里是输入密码）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br></pre></td></tr></table></figure>
+
+<p>直接回车，然后会看到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enter same passphrase again:</span><br></pre></td></tr></table></figure>
+
+<p>继续回车就行了。生成完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> id_rsa_gitee.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> id_rsa_gitee.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:F0K/ojCbFzgMPru11m4g/9uV03oHK+U0rKBLwOOye2c xxx@xxx.com</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|        .        |</span></span><br><span class="line"><span class="string">|       . .       |</span></span><br><span class="line"><span class="string">|  .     . o      |</span></span><br><span class="line"><span class="string">| . + .   . o     |</span></span><br><span class="line"><span class="string">|  o X . S o.     |</span></span><br><span class="line"><span class="string">|  .+.O o.o o*    |</span></span><br><span class="line"><span class="string">|  oo=o+. .+=.+   |</span></span><br><span class="line"><span class="string">|   =++E. .oo+ .  |</span></span><br><span class="line"><span class="string">|  ++.*=o. .o .   |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4、在-Gitee-和-Github-添加-public-key"><a href="#4、在-Gitee-和-Github-添加-public-key" class="headerlink" title="4、在 Gitee 和 Github 添加 public key"></a>4、在 Gitee 和 Github 添加 public key</h2><p>找到用户目录下的 .ssh 文件夹，查看并复制创建好的 <code>id_rsa_gitee.pub</code> 或 <code>id_rsa_github.pub</code> 的内容。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/.ssh</span><br><span class="line"><span class="comment"># 查看 id_rsa_gitee.pub 文件内容</span></span><br><span class="line"><span class="built_in">cat</span> id_rsa_gitee.pub</span><br></pre></td></tr></table></figure>
+
+<p>会显示这样一串东西，复制它：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDZbvgUEj3XAXH4HkW27ibdXgV6VHdrA9/WdSDHtiiC55mjPvxj3OtPxIbpeJmhWyHiJWR6</span><br><span class="line">uUuK+gkb//O51uWCPhHqxKR7+45tZ9jHqXW+hEKPp+odQgc+3hiHAjTkn3JGeIJlQp2UdJCDHBrp+kcgVeg91+y7cU3ufaUQ/hpD</span><br><span class="line">rCgn6uvwjwJgnDhV9DYi+gFUFe7LUwa1o4nfwg43ycuOOuT7c6VO2dj/0pLRUVTPQYu/C3kaaPVedir7mKIu/dM6Ec44bhYTp1Dq</span><br><span class="line">qp8BO42Cfo+n+dempqYTe2wcPvuDjSj884IATc/KvBfc86Yd2Uj7NI7li90Y3i6adoxUIWQh xxx@xxx.com</span><br></pre></td></tr></table></figure>
+
+<p>打开 Gitee 和 Github 的网站找到设置，再找到 SSH Keys，添加复制的 public key 。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-a434314dbe62d64fb1942493555fc2f7_720w.jpg" alt="img"></p>
+<p><img src="https://pic1.zhimg.com/80/v2-c97914c848e5485f2e79f6e7a68a29b8_720w.jpg" alt="img"></p>
+<h2 id="5、添加私钥："><a href="#5、添加私钥：" class="headerlink" title="5、添加私钥："></a>5、添加私钥：</h2><p>默认只读取 id_rsa，为了让 SSH 识别新的私钥，需要将新的私钥加入到 SSH agent 中</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-add ~/.ssh/id-rsa <span class="comment"># ~ 代表.ssh所在目录路径</span></span><br></pre></td></tr></table></figure>
+
+<p>如果执行ssh-add时提示”Could not open a connection to your authentication agent”，可以现执行命令:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-agent bash</span><br><span class="line"><span class="comment"># 然后再运行ssh-add命令。</span></span><br><span class="line"><span class="comment"># 可以通过 ssh-add -l 来确私钥列表</span></span><br><span class="line">$ ssh-add -l</span><br><span class="line"><span class="comment"># 可以通过 ssh-add -D 来清空私钥列表</span></span><br><span class="line">$ ssh-add -D</span><br><span class="line"></span><br><span class="line"><span class="comment">## 可以用于加密私钥，不用每次都输入私钥密码</span></span><br><span class="line">$ ssh-keygen -p  <span class="comment"># 用来修改密码</span></span><br></pre></td></tr></table></figure>
+<p><strong>上边是临时的</strong>：</p>
+<h2 id="6、创建配置文件："><a href="#6、创建配置文件：" class="headerlink" title="6、创建配置文件："></a>6、创建配置文件：</h2><p>**多账号必须配置 config 文件(重点)**：</p>
+<p>若.ssh目录下无 config 文件，则需创建 config 文件</p>
+<p>在 .ssh 文件夹中创建 <strong>config</strong> 文件，添加以下内容以区分多个 ssh key：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gitee</span></span><br><span class="line">Host gitee.com</span><br><span class="line">HostName gitee.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/sxl_id_rsa</span><br><span class="line"></span><br><span class="line"><span class="comment"># github</span></span><br><span class="line">Host github.com</span><br><span class="line">HostName github.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/sxl_id_rsa</span><br><span class="line"></span><br><span class="line"><span class="comment"># coding</span></span><br><span class="line">Host e.coding.net</span><br><span class="line">HostName e.coding.net</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/sxl_id_rsa</span><br><span class="line"></span><br><span class="line"><span class="comment"># codeup</span></span><br><span class="line">Host codeup.aliyun.com</span><br><span class="line">HostName codeup.aliyun.com</span><br><span class="line">PreferredAuthentications publickey</span><br><span class="line">IdentityFile ~/.ssh/sxl_id_rsa <span class="comment"># 路径下密钥的名字</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 相关参数设定</span></span><br><span class="line">Host</span><br><span class="line">它涵盖了下面一个段的配置，我们可以通过他来替代将要连接的服务器地址。</span><br><span class="line">这里可以使用任意字段或通配符。当ssh的时候如果服务器地址能匹配上这里Host指定的值，则Host下面指定的HostName将被作为最终的服务器地址使用，并且将使用该Host字段下面配置的所有自定义配置来覆盖默认的配置信息。</span><br><span class="line">HostName</span><br><span class="line">真正连接的服务器地址</span><br><span class="line">PreferredAuthentications</span><br><span class="line">指定优先使用哪种方式验证，支持密码和秘钥验证方式</span><br><span class="line">IdentityFile</span><br><span class="line">指定本次连接使用的密钥文件</span><br><span class="line">Port</span><br><span class="line">自定义的端口。默认为22，可不配置</span><br><span class="line">User</span><br><span class="line">自定义的用户名，默认为git，可不配置</span><br></pre></td></tr></table></figure>
+
+<h2 id="7、测试连接是否正常"><a href="#7、测试连接是否正常" class="headerlink" title="7、测试连接是否正常"></a>7、测试连接是否正常</h2><p>在命令行输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com // 这个T必须大写</span><br></pre></td></tr></table></figure>
+
+<p>若返回如下内容，则 Github 连接正常：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hi edg7928! You<span class="string">&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span></span><br></pre></td></tr></table></figure>
+
+<p>继续在命令行输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@gitee.com</span><br></pre></td></tr></table></figure>
+
+<p>若返回如下内容，则 Gitee 连接正常。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hi edg7928! You<span class="string">&#x27;ve successfully authenticated, but GITEE.COM does not provide shell access.</span></span><br></pre></td></tr></table></figure>
+<p>继续在命令行输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@codeup.aliyun.com</span><br></pre></td></tr></table></figure>
+<p>若返回如下内容，则 CodeUP 连接正常。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to CodeUP, edg7928!</span><br></pre></td></tr></table></figure>
+
+<p>（完）</p>
+<h1 id="如何在多个平台使用同一把SSH密钥"><a href="#如何在多个平台使用同一把SSH密钥" class="headerlink" title="如何在多个平台使用同一把SSH密钥"></a>如何在多个平台使用同一把SSH密钥</h1><h2 id="1、配置ssh账户和邮箱"><a href="#1、配置ssh账户和邮箱" class="headerlink" title="1、配置ssh账户和邮箱"></a>1、配置ssh账户和邮箱</h2><p><strong>邮箱不必与GitHub账号相同，个人邮箱即可。</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;我的姓名&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;xxxx@qq.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>查看账户和邮箱</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name</span><br><span class="line">git config --global user.email</span><br></pre></td></tr></table></figure>
+
+<h2 id="2、本地生成ssh公钥"><a href="#2、本地生成ssh公钥" class="headerlink" title="2、本地生成ssh公钥"></a>2、本地生成ssh公钥</h2><p>邮箱为刚配置好的账户邮箱</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">&quot;xxxxx@xxxxx.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>按照提示完成三次回车，即可生成 ssh key</p>
+<h2 id="3、查看ssh公钥"><a href="#3、查看ssh公钥" class="headerlink" title="3、查看ssh公钥"></a>3、查看ssh公钥</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
+<h2 id="4、复制公钥到GitHub、gitlab、码云上"><a href="#4、复制公钥到GitHub、gitlab、码云上" class="headerlink" title="4、复制公钥到GitHub、gitlab、码云上"></a>4、复制公钥到GitHub、gitlab、码云上</h2><p><strong>三个平台可以使用一个公钥，还需要配置config文件</strong></p>
+<h2 id="5、测试是否连接成功"><a href="#5、测试是否连接成功" class="headerlink" title="5、测试是否连接成功"></a>5、测试是否连接成功</h2><p>码云</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@gitee.com</span><br><span class="line">Hi menglinjie! You<span class="string">&#x27;ve successfully authenticated, but GITEE.COM does not provide shell access.表示连接成功 </span></span><br></pre></td></tr></table></figure>
+
+<p>github</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com</span><br><span class="line">Hi menglinjie! You<span class="string">&#x27;ve successfully authenticated, but GitHub does not provide shell access.表示连接成功。</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="SSH密钥的相关说明"><a href="#SSH密钥的相关说明" class="headerlink" title="SSH密钥的相关说明"></a>SSH密钥的相关说明</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><strong>密钥对：</strong>在非对称加密技术中，有两种密钥，分为私钥和公钥，私钥是密钥对所有者持有，不可公布，公钥是密钥对持有者公布给他人的。<br><strong>公钥：</strong>公钥用来给数据加密，用公钥加密的数据只能使用私钥解密<br><strong>私钥：</strong>如上，用来解密公钥加密的数据。<br><strong>摘要（digest）：</strong>对需要传输的文本，做一个HASH计算，一般采用SHA1，SHA2来获得<br><strong>签名（signature）：</strong>使用私钥对需要传输的文本的摘要进行加密，得到的密文即被称为该次传输过程的签名。（看最下面的一部分就明白了）<br><strong>签名验证</strong>：数据接收端，拿到传输文本，但是需要确认该文本是否就是发送者发出的内容，中途是否曾经被篡改。因此拿自己持有的公钥对签名进行解密（密钥对中的一种密钥加密的数据必定能使用另一种密钥解密。），得到了文本的摘要，然后使用与发送方同样的HASH算法计算接收到的文本的摘要值，再与解密得到的摘要做对比，发现二者完全一致，则说明文本没有被篡改过。<br><strong>加密：</strong>是将数据资料加密，使得非法用户即使取得加密过的资料，也无法获取正确的资料内容，所以数据加密可以保护数据，防止监听攻击。其重点在于数据的安全性。</p>
+<h2 id="密钥分类"><a href="#密钥分类" class="headerlink" title="密钥分类"></a>密钥分类</h2><p><strong>对称密钥加密</strong>：又称私钥加密或会话密钥加密算法，即信息的发送方和接收方使用同一个密钥去加密和解密数据。它的<strong>最大优势</strong>是加&#x2F;解密<strong>速度快</strong>，适合于对大数据量进行加密，<strong>但密钥管理困难</strong>。</p>
+<p>非对称密钥加密系统，又称<strong>公钥密钥加密</strong>：它需要使用不同的密钥来分别完成加密和解密操作，一个公开发布，即公开密钥，另一个由用户自己秘密保存，即私用密钥。信息发送者用公开密钥去加密，而信息接收者则用私用密钥去解密。公钥机制灵活，但加密和解密<strong>速度却</strong>比对称密钥加密<strong>慢得多</strong>。</p>
+<p>在现代密码体制中加密和解密是采用不同的密钥（公开密钥），也就是非对称密钥密码系统，每个通信方均需要两个密钥，即公钥和私钥，这两把密钥可以互为加解密。公钥是公开的，不需要保密，而私钥是由个人自己持有，并且必须妥善保管和注意保密。公钥私钥的原则：</p>
+<ol>
+<li><strong>一个公钥对应一个私钥</strong>。</li>
+<li><strong>密钥对中，让大家都知道的是公钥，不告诉大家，只有自己知道的，是私钥</strong>。</li>
+<li><strong>如果用其中一个密钥加密数据，则只有对应的那个密钥才可以解密</strong>。</li>
+<li><strong>如果用其中一个密钥可以进行解密数据，则该数据必然是对应的那个密钥进行的加密</strong>。</li>
+</ol>
+<p>　　非对称密钥密码的主要应用就是<strong>公钥加密和公钥认证</strong>，而公钥加密的过程和公钥认证的过程是不一样的，下面我就详细讲解一下两者的区别，详情请见相关文献1、2。</p>
+<h3 id="公开密钥加密过程"><a href="#公开密钥加密过程" class="headerlink" title="公开密钥加密过程"></a>公开密钥加密过程</h3><p>　　比如有两个用户Alice和Bob，Alice想把一段明文通过双钥加密的技术发送给Bob，Bob有一对公钥和私钥，那么加密解密的过程如下：</p>
+<ol>
+<li><strong>Bob将他的公开密钥传送给Alice</strong>。</li>
+<li><strong>Alice用Bob的公开密钥加密她的消息，然后传送给Bob</strong>。</li>
+<li><strong>Bob用他的私人密钥解密Alice的消息</strong>。</li>
+</ol>
+<p>总结：<strong>Alice使用Bob的公钥进行加密，Bob用自己的私钥进行解密</strong>。</p>
+<h3 id="公开密钥认证过程"><a href="#公开密钥认证过程" class="headerlink" title="公开密钥认证过程"></a>公开密钥认证过程</h3><p>　　身份认证和加密就不同了，主要用于<strong>鉴别用户的真伪</strong>。这里我们只要能够鉴别一个用户的私钥是正确的，就可以鉴别这个用户的真伪。</p>
+<p>　　还是Alice和Bob这两个用户，Alice想让Bob知道自己是真实的Alice，而不是假冒的，因此Alice只要使用公钥密码学对文件签名发送给Bob，Bob使用Alice的公钥对文件进行解密，如果可以解密成功，则证明Alice的私钥是正确的，因而就完成了对Alice的身份鉴别。整个身份认证的过程如下：</p>
+<ol>
+<li><strong>Alice用她的私人密钥对文件加密，从而对文件签名</strong>。</li>
+<li><strong>Alice将签名的文件传送给Bob</strong>。</li>
+<li><strong>Bob用Alice的公钥解密文件，从而验证签名</strong>。</li>
+</ol>
+<p>总结：<strong>Alice使用自己的私钥加密，Bob用Alice的公钥进行解密</strong>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>密钥指的是私钥或者公钥—&gt;密钥&#x3D;私钥&#x2F;公钥；</li>
+<li>密钥对，针对的是非对称加密—&gt;密钥对&#x3D;私钥+公钥</li>
+</ol>
+<p>既然是加密,肯定是不希望别人知道我的消息,所以只要我才能解密 ，所以得出,<strong>公钥负责加密,私钥负责解密</strong>, <strong>同理,既然是签名,那肯定是不希望有人冒充我发消息,只有我才能发布这个签名, 所以得出,私钥负责签名,公钥负责验证</strong></p>
+<p>那么这里一共有两组四个密钥：<br>A的公钥（PUB_A），A的私钥（PRI_A）；B的公钥（PUB_B），B的私钥（PRI_B）。</p>
+<p><strong>公钥一般用来加密，私钥用来签名</strong>。通常公钥是公开出去的，但是私钥只能自己私密持有。公钥和私钥唯一对应，用某个公钥签名过得内容只能用对应的私钥才能解签验证；<strong>同样用某个私钥加密的内容只能用对应的公钥才能解密</strong>。<br>这时A向B发送信息的整个签名和加密的过程如下：</p>
+<ol>
+<li>A先用自己的私钥（PRI_A）对信息（一般是信息的摘要）进行签名。</li>
+<li>A接着使用B的公钥（PUB_B）对信息内容和签名信息进行加密。</li>
+</ol>
+<p>这样当B接收到A的信息后，获取信息内容的步骤如下：</p>
+<ol>
+<li>B用自己的私钥（PRI_B）解密A用B的公钥（PUB_B）加密的内容</li>
+<li>B得到解密后的明文后用A的公钥（PUB_A）解签A用A自己的私钥（PRI_A）的签名。</li>
+</ol>
+<p>从而整个过程就保证了开始说的端到端的唯一确认。A的签名只有A的公钥才能解签，这样B就能确认这个信息是A发来的；A的加密只有B的私钥才能解密，这样A就能确认这份信息只能被B读取。</p>
+<p>SSH公钥也有安全隐患：如果请求被劫持，接收到假的公钥，然而用户还将此公钥当成真的公钥，那就把信息传给了坏人</p>
+<p><strong>总结：</strong>公钥和私钥是成对的，它们互相解密（密钥指公钥或私钥，密钥对指公钥加私钥）。</p>
+<p><strong>公钥和私钥都可以加密和解密</strong>。</p>
+<p><strong>私钥数字签名，公钥验证</strong>。</p>
+<p>（如下图）</p>
+<p><img src="https://img-blog.csdn.net/20180608110633762?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2h1YW5odWFucTEyMDk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20190305150104217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNTg2Mjgw,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h2 id="SSH使用的图示过程"><a href="#SSH使用的图示过程" class="headerlink" title="SSH使用的图示过程"></a>SSH使用的图示过程</h2><p>\1. 鲍勃有两把钥匙，一把是公钥，另一把是私钥。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey1.png" alt="PubKey1"></p>
+<p>\2. 鲍勃把公钥送给他的朋友们—-帕蒂、道格、苏珊—-每人一把。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey2.png" alt="PubKey2"></p>
+<p>\3. 苏珊要给鲍勃写一封保密的信。她写完后用鲍勃的公钥加密，就可以达到保密的效果。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey3.png" alt="PubKey3"></p>
+<p>\4. 鲍勃收信后，用私钥解密，就看到了信件内容。这里要强调的是，只要鲍勃的私钥不泄露，这封信就是安全的，即使落在别人手里，也无法解密。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey4.png" alt="PubKey4"></p>
+<p>\5. 鲍勃给苏珊回信，决定采用”数字签名”。他写完后先用Hash函数，生成信件的摘要（digest）。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey5.png" alt="PubKey5"></p>
+<p>\6. 然后，鲍勃使用私钥，对这个摘要加密，生成”数字签名”（signature）。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey6.png" alt="PubKey6"></p>
+<p>\7. 鲍勃将这个签名，附在信件下面，一起发给苏珊。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey7.png" alt="PubKey7"></p>
+<p>\8. 苏珊收信后，取下数字签名，用鲍勃的公钥解密，得到信件的摘要。由此证明，这封信确实是鲍勃发出的。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey8.png" alt="PubKey8"></p>
+<p>\9. 苏珊再对信件本身使用Hash函数，将得到的结果，与上一步得到的摘要进行对比。如果两者一致，就证明这封信未被修改过。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey9.png" alt="PubKey9"></p>
+<p>\10. 复杂的情况出现了。道格想欺骗苏珊，他偷偷使用了苏珊的电脑，用自己的公钥换走了鲍勃的公钥。此时，苏珊实际拥有的是道格的公钥，但是还以为这是鲍勃的公钥。因此，道格就可以冒充鲍勃，用自己的私钥做成”数字签名”，写信给苏珊，让苏珊用假的鲍勃公钥进行解密。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey10.png" alt="PubKey10"></p>
+<p>\11. 后来，苏珊感觉不对劲，发现自己无法确定公钥是否真的属于鲍勃。她想到了一个办法，要求鲍勃去找”证书中心”（certificate authority，简称CA），为公钥做认证。证书中心用自己的私钥，对鲍勃的公钥和一些相关信息一起加密，生成”数字证书”（Di<a target="_blank" rel="noopener" href="http://www.linuxprobe.com/chapter-21/">git</a>al Certificate）。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey11.png" alt="PubKey11"></p>
+<p>\12. 鲍勃拿到数字证书以后，就可以放心了。以后再给苏珊写信，只要在签名的同时，再附上数字证书就行了。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey12.png" alt="PubKey12"></p>
+<p>\13. 苏珊收信后，用CA的公钥解开数字证书，就可以拿到鲍勃真实的公钥了，然后就能证明”数字签名”是否真的是鲍勃签的。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey13.png" alt="PubKey13"></p>
+<p>\14. 下面，我们看一个应用”数字证书”的实例：https协议。这个协议主要用于网页加密。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey14.jpg" alt="PubKey14"></p>
+<p>\15. 首先，客户端向服务器发出加密请求。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey15.png" alt="PubKey15"></p>
+<p>\16. 服务器用自己的私钥加密网页以后，连同本身的数字证书，一起发送给客户端。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey16.png" alt="PubKey16"></p>
+<p>\17. 客户端（浏览器）的”证书管理器”，有”受信任的根证书颁发机构”列表。客户端会根据这张列表，查看解开数字证书的公钥是否在列表之内。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey17.png" alt="PubKey17"></p>
+<p>\18. 如果数字证书记载的网址，与你正在浏览的网址不一致，就说明这张证书可能被冒用，浏览器会发出警告。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey18.png" alt="PubKey18"></p>
+<p>\19. 如果这张数字证书不是由受信任的机构颁发的，浏览器会发出另一种警告。<br><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey19.jpg" alt="PubKey19"></p>
+<p><img src="http://www.linuxprobe.com/wp-content/uploads/2016/04/PubKey20.png" alt="PubKey20"></p>
+<h2 id="相关文献"><a href="#相关文献" class="headerlink" title="相关文献"></a>相关文献</h2><p>1、linux中公钥和私钥的区别以及关系：<a target="_blank" rel="noopener" href="https://blog.csdn.net/gui951753/article/details/79252773">https://blog.csdn.net/gui951753/article/details/79252773</a></p>
+<p>2、SSH 公钥 私钥的理解：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/134349361">https://zhuanlan.zhihu.com/p/134349361</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/11/20/SSH%E7%9A%84%E5%85%AC%E9%92%A5%E5%92%8C%E7%A7%81%E9%92%A5%E7%9A%84%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/" data-id="claowq8v60000hw7jgj5e8y4k" data-title="SSH的公钥和私钥的相关配置" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo%E5%8D%9A%E5%AE%A2/" rel="tag">Hexo博客</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSH/" rel="tag">SSH</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/11/20/git%E7%9A%84autocrlf%E4%B8%8Esafecrlf%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">git的autocrlf与safecrlf的相关设置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2/">Hexo博客</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2/SSH%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95/">SSH免密登录</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Hexo%E5%8D%9A%E5%AE%A2/%E5%88%9D%E5%A7%8B%E5%8C%96/">初始化</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/%E5%90%8E%E7%AB%AF/">后端</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%89%8D%E7%AB%AF/%E5%90%8E%E7%AB%AF/Java/">Java</a></li></ul></li></ul></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CRLF/" rel="tag">CRLF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo%E5%8D%9A%E5%AE%A2/" rel="tag">Hexo博客</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LF/" rel="tag">LF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSH/" rel="tag">SSH</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E4%BA%AB/" rel="tag">分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%BC%E8%88%AA/" rel="tag">导航</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CRLF/" style="font-size: 10px;">CRLF</a> <a href="/tags/Hexo%E5%8D%9A%E5%AE%A2/" style="font-size: 20px;">Hexo博客</a> <a href="/tags/LF/" style="font-size: 10px;">LF</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/%E5%88%86%E4%BA%AB/" style="font-size: 10px;">分享</a> <a href="/tags/%E5%AF%BC%E8%88%AA/" style="font-size: 10px;">导航</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">November 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/11/20/SSH%E7%9A%84%E5%85%AC%E9%92%A5%E5%92%8C%E7%A7%81%E9%92%A5%E7%9A%84%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE/">SSH的公钥和私钥的相关配置</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/20/git%E7%9A%84autocrlf%E4%B8%8Esafecrlf%E7%9A%84%E7%9B%B8%E5%85%B3%E8%AE%BE%E7%BD%AE/">git的autocrlf与safecrlf的相关设置</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/20/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">个人博客</a>
+          </li>
+        
+          <li>
+            <a href="/2022/11/20/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2021/02/22/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2/">我的第一篇博客</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
